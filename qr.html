@@ -38,8 +38,41 @@
     <p id="output">Scan a QR Code to see the result here.</p>
     
     <!-- Include the html5-qrcode library -->
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
+        const html5QrCode = new Html5Qrcode("reader");
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Handle the scanned result
+            console.log(`Decoded text: ${decodedText}`);
+            document.getElementById("output").innerText = `QR Code Data: ${decodedText}`;
+            
+            // Stop scanning after a successful scan
+            html5QrCode.stop().then(() => {
+                console.log("Scanner stopped.");
+            }).catch(err => {
+                console.error("Error stopping scanner", err);
+            });
+        }
+
+        function onScanFailure(error) {
+            // Handle scan errors
+            console.warn(`QR Code scan error: ${error}`);
+        }
+
+        // Start the QR scanner
+        html5QrCode.start(
+    { facingMode: "environment" }, // Use the back camera
+    { fps: 10 }, // Remove qrbox to allow full-frame scanning
+    onScanSuccess,
+    onScanFailure
+).catch(err => {
+    console.error("Failed to start QR scanner", err);
+});
+    </script>
+
+
+    <!-- <script>
         // Initialize the QR code scanner
         const html5QrCode = new Html5Qrcode("reader");
 
@@ -61,17 +94,23 @@
             console.warn(`QR Code scan error: ${error}`);
         }
 
-        // Start the scanner with the back camera
-        html5QrCode.start(
-            { facingMode: "environment" }, // Use the environment (rear) camera
-            { fps: 10, qrbox: { width: 250, height: 250 } }, // Frame settings
-            onScanSuccess,
-            onScanFailure
-        ).catch(err => {
-            console.error("Failed to start QR scanner", err);
-            alert("Unable to access the camera. Ensure the page is served over HTTPS and camera permissions are granted.");
-        });
+        
 
-    </script>
+        html5QrCode.start(
+    { facingMode: "environment" }, // Use rear camera
+    { fps: 10, qrbox: { width: 250, height: 250 } },
+    (decodedText) => {
+        console.log(`Decoded text: ${decodedText}`);
+        document.getElementById("output").innerText = `QR Code Data: ${decodedText}`;
+    },
+    (error) => {
+        console.warn(`QR Code scan error: ${error}`);
+    }
+).catch(err => {
+    console.error("Failed to start QR scanner", err);
+    alert("Error starting QR scanner: " + err.message);
+});
+
+    </script> -->
 </body>
 </html>
