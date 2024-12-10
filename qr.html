@@ -3,76 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
+    <title>QR Code Scanner2</title>
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        padding: 20px;
-        background-color: #f5f5f5;
-    }
-    
-    h1 {
-        color: #333;
-    }
-    
-    #reader {
-        width: 300px;
-        height: 300px;
-        margin: 20px auto;
-        border: 2px solid #ccc;
-        border-radius: 10px;
-    }
-    
-    #output {
-        margin-top: 20px;
-        font-size: 18px;
-        color: #555;
-    }
-</style>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #reader {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <h1>QR Code Scanner</h1>
     <div id="reader"></div>
     <p id="output">Scan a QR Code to see the result here.</p>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-
-    <script>
-        
-        // Initialize the QR code scanner
-const html5QrCode = new Html5Qrcode("reader");
-
-function onScanSuccess(decodedText, decodedResult) {
-    // Handle the scanned result here
-    console.log(`Decoded text: ${decodedText}`);
-    document.getElementById("output").innerText = `QR Code Data: ${decodedText}`;
     
-    // Stop the scanner after successful scan
-    html5QrCode.stop().then(() => {
-        console.log("Scanner stopped");
-    }).catch(err => {
-        console.error("Error stopping scanner", err);
-    });
-}
+    <!-- Include the html5-qrcode library -->
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script>
+        // Initialize the QR code scanner
+        const html5QrCode = new Html5Qrcode("reader");
 
-function onScanFailure(error) {
-    // Handle errors during scanning
-    console.warn(`QR Code scan error: ${error}`);
-}
+        function onScanSuccess(decodedText, decodedResult) {
+            // Handle the scanned result here
+            console.log(`Decoded text: ${decodedText}`);
+            document.getElementById("output").innerText = `QR Code Data: ${decodedText}`;
+            
+            // Stop the scanner to avoid multiple detections
+            html5QrCode.stop().then(() => {
+                console.log("Scanner stopped successfully.");
+            }).catch(err => {
+                console.error("Error stopping the scanner", err);
+            });
+        }
 
-// Start the scanner with the back camera
-html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: { width: 250, height: 250 } },
-    onScanSuccess,
-    onScanFailure
-).catch(err => {
-    console.error("Failed to start QR scanner", err);
-});
+        function onScanFailure(error) {
+            // Handle scan errors here
+            console.warn(`QR Code scan error: ${error}`);
+        }
+
+        // Start the scanner with the back camera
+        html5QrCode.start(
+            { facingMode: "environment" }, // Use the environment (rear) camera
+            { fps: 10, qrbox: { width: 250, height: 250 } }, // Frame settings
+            onScanSuccess,
+            onScanFailure
+        ).catch(err => {
+            console.error("Failed to start QR scanner", err);
+            alert("Unable to access the camera. Ensure the page is served over HTTPS and camera permissions are granted.");
+        });
 
     </script>
-    <!-- <script src="script.js"></script> -->
 </body>
 </html>
